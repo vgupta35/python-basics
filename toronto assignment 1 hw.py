@@ -109,58 +109,47 @@ def isIn(firstCorner=(0,0), secondCorner=(0,0), point=(0,0)):
 
 #Test Function
 
+%matplotlib inline
+
 import numpy as np
+import itertools as it
+import matplotlib.pyplot as plt
 
-def testfunction(firstCorner=(0,0), secondCorner=(0,0)): 
-    frameparameter = 2
+def testfunction(firstCorner=(0,0), secondCorner=(0,0),frameparameter=0): 
+    """Checks all points within shape created by vertices +/- n spaces based on frame parameter.
+    Returns a visual with blue and True and red as False. Used to validate isIn() function. """
     checks = min(len(firstCorner), len(secondCorner))
-    listfirst = list(firstCorner)
-    listsecond = list(secondCorner)
+    listfirst, listsecond = list(firstCorner), list(secondCorner)
+    leftcorner = [0]*checks
+    rightcorner = [0]*checks
     for a in range(checks):
-        if firstCorner[a] < secondCorner[a]: 
-            leftcorner = listfirst
-            rightcorner = listsecond
-        else: 
-            leftcorner = listsecond
-            rightcorner = listfirst
-        leftcorner[a] = leftcorner[a] - frameparameter
-        rightcorner[a] = rightcorner[a] + frameparameter
+        leftcorner[a] = min(listfirst[a],listsecond[a]) - abs(frameparameter)
+        rightcorner[a] = max(listfirst[a],listsecond[a]) + abs(frameparameter)
     checkfirst = tuple(leftcorner)
-    checksecond = tuple(rightcorner)
-    checkdimensions = []
-	coordinates = []
-	for z in range(checks):
-		coordinates[z] = np.arange(checkfirst[z],checksecond[z]+1,1)
-	def matrix(n): 
-		while n >= 0: 
-			row_op = []
-			for a in coordinates[n]: 
-				matrix(n-1)
-			row_op.append(a)
-		return row_op
-	points = matrix(checks)
-	return points
-	for p in points:
-		
-	
-	
-	a_int = np.arange(checkfirst[0],checksecond[0]+1,1)
-    b_int = np.arange(checkfirst[1],checksecond[1]+1,1)
-    matrix = []
-    for i in a_int: 
-        row_op = []
-        for j in b_int:
-            row_op.append((i,j))
-        matrix.append(row_op)
-    results = []
+    checksecond = tuple(rightcorner)    
+    coordinates = []
+    for z in range(checks):
+        coordinates.append(np.arange(checkfirst[z],checksecond[z]+1,1))
+    matrix = list(it.product(*coordinates))
+    visual = []
     for m in matrix:
-        for a in m:
-            entry = isIn(firstCorner,secondCorner,a)
-            results.append([a,entry])
-    return results
+        entry = isIn(firstCorner,secondCorner,m)
+        visual.append([m,entry])  
+#     return visual
+## Returning here shows raw data. 
+## Plot going forward only works in 2 dimensions.
+    visualarray = np.array(visual)
+    for (v, c) in [(True, 'b'), (False, 'r')]:
+        if visualarray[visualarray[:,1] == v].any():
+            plt.scatter(*zip(*visualarray[visualarray[:,1] == v,0]),c = c)
+    return plt.show()
 
-#testfunction((1,1),(5,5))
-testfunction((5,5),(3,3))
+
+# testfunction((5,5),(3,3),2)
+# testfunction((-1,-1),(10,10),1)
+# testfunction((-1,10),(10,-1),2)
+
+testfunction((10,3),(-1,7),2)
 
 
 
