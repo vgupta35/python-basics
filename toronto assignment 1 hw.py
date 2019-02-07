@@ -205,15 +205,16 @@ def testallfunction(firstCorner=(0,0), secondCorner=(0,0),boxframe=0, pointframe
     Returns a visual with blue and True and red as False. Used to validate allIn() function. """
     checks = min(len(firstCorner), len(secondCorner))
     listfirst, listsecond = list(firstCorner), list(secondCorner)
-    leftcorner = [0]*checks
+    leftcorner = [0]*checks #repeat an array
     rightcorner = [0]*checks
     for a in range(checks):
         leftcorner[a] = min(listfirst[a],listsecond[a]) - abs(boxframe)
         rightcorner[a] = max(listfirst[a],listsecond[a]) + abs(boxframe)
-    checkfirst = tuple(leftcorner)
+    checkfirst = tuple(leftcorner) #Convert back and forth between list and tuple for mutability
     checksecond = tuple(rightcorner)    
     coordinates = []
-    for z in range(checks):
+    #Quick coordinate generation: list all possibilities of coordinates then use itertools package
+	for z in range(checks):
         coordinates.append(np.arange(checkfirst[z],checksecond[z]+1,1))
     matrix = list(it.product(*coordinates))
     visual = []
@@ -227,7 +228,7 @@ def testallfunction(firstCorner=(0,0), secondCorner=(0,0),boxframe=0, pointframe
         visual.append([center,pointset,entry])  
 #     return visual
 # Returning here shows raw data. 
-# Plot going forward only works in 2 dimensions.
+# Plot generating colored scatter plot only works in 2 dimensions.
     visualarray = np.array(visual)
     for (v, c) in [(True, 'b'), (False, 'r')]:
         if visualarray[visualarray[:,2] == v].any():
